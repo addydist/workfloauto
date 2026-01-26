@@ -1,7 +1,7 @@
 "use client";
 
 import {
-    CreditCardIcon,
+  CreditCardIcon,
   FolderOpenIcon,
   HistoryIcon,
   KeyIcon,
@@ -22,9 +22,10 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { useHasActiveSubscription } from "@/features/subscriptions/use-subscriptions";
 
 const mainItems = [
   {
@@ -52,7 +53,7 @@ const mainItems = [
 export function AppSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-
+  const { hasActiveSubscription, isLoading } = useHasActiveSubscription();
   return (
     <Sidebar collapsible="icon">
       {/* Header */}
@@ -90,7 +91,11 @@ export function AppSidebar() {
 
                   return (
                     <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton tooltip={item.title} asChild isActive={isActive} >
+                      <SidebarMenuButton
+                        tooltip={item.title}
+                        asChild
+                        isActive={isActive}
+                      >
                         <Link
                           href={item.url}
                           className="flex items-center gap-3"
@@ -111,20 +116,23 @@ export function AppSidebar() {
       {/* Footer */}
       <SidebarFooter>
         <SidebarMenu>
-        <SidebarMenuItem>
-            <SidebarMenuButton
-             tooltip={"upgrade to pro"}
-              onClick={() => router.push("/logout")}
-              className="gap-x-4 h-10 px-4"
-            >
-              <StarIcon size={18} />
-              <span>Upgrade to pro</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {!hasActiveSubscription && !isLoading && (
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                tooltip={"upgrade to pro"}
+                onClick={() => authClient.checkout({ slug: "Nodeflo-pro" })}
+                className="gap-x-4 h-10 px-4"
+              >
+                <StarIcon size={18} />
+                <span>Upgrade to pro</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
+
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip={"Billing Portal"}
-              onClick={() => router.push("/logout")}
+              onClick={() => authClient.customer.portal()}
               className="gap-x-4 h-10 px-4"
             >
               <CreditCardIcon size={18} />
@@ -133,13 +141,16 @@ export function AppSidebar() {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton
-             tooltip={"Sign out"}
-              onClick={() => authClient.signOut({
-                fetchOptions: {
+              tooltip={"Sign out"}
+              onClick={() =>
+                authClient.signOut({
+                  fetchOptions: {
                     onSuccess: () => {
-                        router.push("/login");
-                        },}
-              })}
+                      router.push("/login");
+                    },
+                  },
+                })
+              }
               className="text-red-600 gap-x-4 h-10 px-4"
             >
               <LogOutIcon size={18} />
