@@ -1,0 +1,56 @@
+"use client";
+import { boolean } from "zod";
+import { useCreateWorkflow, useSuspenseWorkflows } from "../hooks/use-workflow";
+import { EntityContaniner, EntityHeader } from "@/components/entity-components";
+import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
+import { ro } from "date-fns/locale";
+import { useRouter } from "next/navigation";
+
+export const WorkflowsList = () => {
+  const workflows = useSuspenseWorkflows();
+  return (
+    <div className="flex-1">
+      <p>{JSON.stringify(workflows.data, null, 2)}</p>
+    </div>
+  );
+};
+export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
+    const createWorkflow=useCreateWorkflow();
+    const router=useRouter();
+    const {handleError,modal}=useUpgradeModal();
+    const handlecreateWorkflow=()=>{
+        createWorkflow.mutate(undefined,{
+            onSuccess:(data)=>{
+               router.push(`/workflows/${data.id}`);
+            },
+            onError:(error)=>{
+                handleError(error);
+            }
+        });
+    }
+  return (
+    <>
+    {modal}
+      <EntityHeader
+        title="Workflows"
+        description="Create and manage workflows"
+        onNew={handlecreateWorkflow}
+        newButtonLabel="New Workflow"
+        disabled={disabled}
+        isCreating={createWorkflow.isPending}
+      />
+    </>
+  );
+};
+
+export const WorkflowsContainer = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  return (
+    <EntityContaniner header={<WorkflowsHeader/>} search={<></>} pagination={<></>}>
+      {children}
+    </EntityContaniner>
+  );
+};
