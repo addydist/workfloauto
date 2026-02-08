@@ -2,7 +2,7 @@ import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/utils";
 
-export function BaseNode({ className, ...props }: ComponentProps<"div">) {
+export function BaseNode({ className, status,  ...props}: ComponentProps<"div">) {
   return (
     <div
       className={cn(
