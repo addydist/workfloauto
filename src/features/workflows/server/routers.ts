@@ -9,7 +9,26 @@ import {
 } from "@/trpc/init";
 import { generateSlug } from "random-word-slugs";
 import z from "zod";
+import { inngest } from "@/inngest/client";
 export const workflowsRouter = createTRPCRouter({
+  execute: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const workflow = await prisma.workflow.findUniqueOrThrow({
+        where: {
+          id: input.id,
+          userId: ctx.auth.user.id,
+        },
+      });
+      await inngest.send({
+        name: "workflow/execute.workflow",
+        data: {
+          workflowId: input.id,
+        },
+      });
+      return workflow;
+    }),
+
   create: premiumProcedure.mutation(({ ctx }) => {
     return prisma.workflow.create({
       data: {
@@ -71,8 +90,8 @@ export const workflowsRouter = createTRPCRouter({
 
       return await prisma.$transaction(async (tx) => {
         await tx.node.deleteMany({
-          where: { workflowId:id },
-        })
+          where: { workflowId: id },
+        });
         await tx.node.createMany({
           data: nodes.map((node) => ({
             id: node.id,
@@ -91,18 +110,18 @@ export const workflowsRouter = createTRPCRouter({
             workflowId: id,
             fromNodeId: edge.source,
             toNodeId: edge.target,
-            fromOutput: edge.sourceHandle || 'main',
-            toInput: edge.targetHandle || 'main',
+            fromOutput: edge.sourceHandle || "main",
+            toInput: edge.targetHandle || "main",
           })),
         });
 
         return tx.workflow.update({
-          where: { id},
+          where: { id },
           data: {
             updatedAt: new Date(),
           },
         });
-      })
+      });
     }),
 
   updateName: protectedProcedure
