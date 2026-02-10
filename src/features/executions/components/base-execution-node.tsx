@@ -4,6 +4,7 @@ import { type NodeProps, Position, useReactFlow } from "@xyflow/react";
 import { Icon, type LucideIcon } from "lucide-react";
 import Image from "next/image";
 import { memo, type ReactNode, useCallback } from "react";
+import { cn } from "@/lib/utils";
 import { BaseNode, BaseNodeContent } from "@/components/react-flow/base-node";
 import { BaseHandle } from "../../../components/react-flow/base-handle";
 import { WorkflowNode } from "../../../components/workflow-node";
@@ -59,7 +60,13 @@ export const BaseExecutionNode = memo(
           variant="border"
           className="rounded-l-2xl"
         >
-          <BaseNode status={status} onDoubleClick={onDoubleClick}>
+        <BaseNode
+          status={status}
+          onDoubleClick={onDoubleClick}
+          className={cn(
+            status && status !== "initial" && "border-transparent bg-clip-padding"
+          )}
+        >
             <BaseNodeContent>
               {typeof Icon === "string" ? (
                 <Image src={Icon} alt={name} width={20} height={20} />
