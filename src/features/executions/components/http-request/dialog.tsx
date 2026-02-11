@@ -32,7 +32,10 @@ import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
 const formSchema = z.object({
-  endpoint: z.string().url({ message: "Invalid URL" }),
+  variableName: z.string()
+  .min(1,{message:"Variable name is required"})
+  .regex(/^[A-Za-z_][A-Za-z0-9_$]*$/, { message: "Invalid variable name. It should start with letter or underscore" }),
+  endpoint: z.url({ message: "Invalid URL" }),
   method: z.enum(["GET", "POST", "PUT", "DELETE"]),
   body: z.string().optional(),
 });
@@ -60,6 +63,7 @@ export const HttpRequestDialog = ({
   });
   useEffect(() => {
     form.reset({
+      variableName: defaultValues.variableName || "",
       endpoint: defaultValues.endpoint || "",
       method: defaultValues.method || "GET",
       body: defaultValues.body || "",
@@ -67,7 +71,7 @@ export const HttpRequestDialog = ({
   }, [open,defaultValues, form]);
   const watchMethod = form.watch("method");
   const showBodyField = ["POST", "PUT", "PATCH"].includes(watchMethod);
-
+  const watchvariable = form.watch("variableName") || "myapicall";
   const handleSubmit = (values: z.infer<typeof formSchema>) => {
     onSubmit?.(values);
     onOpenChange(false);
@@ -90,6 +94,22 @@ export const HttpRequestDialog = ({
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-4"
           >
+             <FormField
+              control={form.control}
+              name="variableName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Variable Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="myapicall" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Use this name to referencethe result in th other nodes:{" "}{`{{${watchvariable}.httpResponse.data}}`}
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="endpoint"

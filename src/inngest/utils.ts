@@ -30,7 +30,7 @@ export const topologicalSort = (
     sortedNodeIds = toposort(edges);
     sortedNodeIds=[...new Set(sortedNodeIds)];
   }catch(e){
-   if(e instanceof Error && e.message.includes("Cyclic dependency")) {
+   if(e instanceof Error && e.message.includes("Cyclic")) {
     throw new Error(`Cyclic dependency detected in workflow: ${e.message}`);
    } 
    throw e;
