@@ -1,13 +1,18 @@
 import type { NodeExecutor } from "@/features/executions/types";
 import { NonRetriableError } from "inngest";
 import ky, { type Options as KyOptions } from "ky";
+import HandleBars from "handlebars";
 type httpRequestData = {
-  variableName?: string;
-  endpoint?: string;
+  variableName: string;
+  endpoint: string;
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   body?: string;
 };
-
+HandleBars.registerHelper("json", (context) => {
+  const stringified = JSON.stringify(context, null, 2);
+  const safeString = new HandleBars.SafeString(stringified);
+  return safeString;
+});
 export const httpRequestExecutor: NodeExecutor<httpRequestData> = async ({
   nodeId,
   data,
@@ -24,13 +29,20 @@ export const httpRequestExecutor: NodeExecutor<httpRequestData> = async ({
       `VaraibleName is required for HTTP Request node: ${nodeId}`
     );
   }
+  if (!data.method) {
+    throw new NonRetriableError(
+      `Method is required for HTTP Request node: ${nodeId}`
+    );
+  }
   const result = await step.run(`http-request`, async () => {
-    const endpoint = data.endpoint!;
-    const method = data.method || "GET";
+    const endpoint = HandleBars.compile(data.endpoint)(context);
+    const method = data.method;
     const options: KyOptions = {
       method,
     };
     if (["POST", "PUT", "PATCH"].includes(method)) {
+      const resloved = HandleBars.compile(data.body || "")(context);
+      JSON.parse(resloved);
       options.body = data.body;
       options.headers = {
         "Content-Type": "application/json",
@@ -48,15 +60,10 @@ export const httpRequestExecutor: NodeExecutor<httpRequestData> = async ({
         data: responseData,
       },
     };
-    if (data.variableName) {
-      return {
-        ...context,
-        [data.variableName]: responsePlayload,
-      };
-    }
+
     return {
       ...context,
-      ...responsePlayload,
+      [data.variableName]: responsePlayload,
     };
   });
 
