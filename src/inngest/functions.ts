@@ -5,11 +5,18 @@ import { NonRetriableError } from "inngest";
 import { topologicalSort } from "./utils";
 import { NodeType } from "@/generated/prisma";
 import { getExecutor } from "@/features/executions/lib/executor-registry";
+import { httpRequestChannel } from "./channels/http-request";
+import { manualTriggerChannel } from "./channels/manual-request";
 const google = createGoogleGenerativeAI();
 export const executeWorkflow = inngest.createFunction(
-  { id: "execute-workflow" },
-  { event: "workflow/execute.workflow" },
-  async ({ event, step }) => {
+  { id: "execute-workflow",retries: 0 },
+  { event: "workflow/execute.workflow" ,
+    channels:[
+      httpRequestChannel(),
+      manualTriggerChannel()
+    ]
+  },
+  async ({ event, step,publish }) => {
     const workflowId = event.data.workflowId;
     if (!workflowId) {
       throw new NonRetriableError("No workflow ID provided");
@@ -25,15 +32,16 @@ export const executeWorkflow = inngest.createFunction(
       }
       return topologicalSort(workflow.nodes, workflow.connections);
     });
-    let context=event.data.initialData || {};
+    let context = event.data.initialData || {};
     for (const node of sortedNodes) {
-      const executor=getExecutor(node.type as NodeType);
-      context=await executor({
-        data:node.data as Record<string, unknown>,
-        nodeId:node.id,
+      const executor = getExecutor(node.type as NodeType);
+      context = await executor({
+        data: node.data as Record<string, unknown>,
+        nodeId: node.id,
         context,
-        step
-      })
+        step,
+        publish
+      });
     }
     return { workflowId, context };
   }
