@@ -181,7 +181,7 @@ export const HttpRequestDialog = ({
             )}
 
             <Button type="submit" className="w-full">
-              Send Request
+             Save
             </Button>
           </form>
         </Form>
