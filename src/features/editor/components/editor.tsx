@@ -77,7 +77,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         </Panel>
         {hasManualTrigger &&(
           <Panel position="bottom-center">
-            <ExecuteWorkflowButton workflowId={workflowId}/>
+            <ExecuteWorkflowButton workflowId={workflowId} />
           </Panel>
         )}
       </ReactFlow>
