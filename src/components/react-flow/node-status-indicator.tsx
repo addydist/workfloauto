@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { LoaderCircle } from "lucide-react";
+import { Check, LoaderCircle, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -41,8 +41,8 @@ export const BorderLoadingIndicator = ({
   className?: string;
 }) => {
   return (
-    <>
-      <div className={cn("absolute -top-px -left-px h-[calc(100%+2px)] w-[calc(100%+2px)] overflow-hidden",className)}>
+    <div className="relative">
+      <div className={cn("absolute -top-px -left-px h-[calc(100%+2px)] w-[calc(100%+2px)] overflow-hidden", className)}>
         <style>
           {`
         @keyframes spin {
@@ -65,7 +65,7 @@ export const BorderLoadingIndicator = ({
         </div>
       </div>
       {children}
-    </>
+    </div>
   );
 };
 
@@ -80,7 +80,7 @@ const StatusBorder = ({
     <>
       <div
         className={cn(
-          "absolute -top-px -left-px h-[calc(100%+2px)] w-[calc(100%+2px)] border-2",
+          "pointer-events-none absolute -top-px -left-px h-[calc(100%+2px)] w-[calc(100%+2px)] border-2",
           className,
         )}
       />
@@ -93,25 +93,41 @@ export const NodeStatusIndicator = ({
   status,
   variant = "border",
   children,
-  className
+  className,
 }: NodeStatusIndicatorProps) => {
-  switch (status) {
-    case "loading":
-      switch (variant) {
-        case "overlay":
-          return <SpinnerLoadingIndicator>{children}</SpinnerLoadingIndicator>;
-        case "border":
-          return <BorderLoadingIndicator className={className}>{children}</BorderLoadingIndicator>;
-        default:
-          return <>{children}</>;
-      }
-    case "success":
-      return (
-        <StatusBorder className={cn("border-emerald-600",className)}>{children}</StatusBorder>
-      );
-    case "error":
-      return <StatusBorder className={cn("border-red-400",className)}>{children}</StatusBorder>;
-    default:
-      return <>{children}</>;
-  }
+  if (!status || status === "initial") return <>{children}</>;
+
+  return (
+    <div className="relative">
+      {status === "loading" ? (
+        variant === "overlay" ? (
+          <SpinnerLoadingIndicator>{children}</SpinnerLoadingIndicator>
+        ) : (
+          <BorderLoadingIndicator className={className}>
+            {children}
+          </BorderLoadingIndicator>
+        )
+      ) : status === "success" ? (
+        <>
+          <StatusBorder className={cn("border-emerald-500/50", className)}>
+            {children}
+          </StatusBorder>
+          <div className="absolute -right-2 -bottom-2 z-50 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background bg-emerald-500 text-white shadow-sm">
+            <Check className="size-3 stroke-[3]" />
+          </div>
+        </>
+      ) : status === "error" ? (
+        <>
+          <StatusBorder className={cn("border-red-500/50", className)}>
+            {children}
+          </StatusBorder>
+          <div className="absolute -right-2 -bottom-2 z-50 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background bg-red-500 text-white shadow-sm">
+            <X className="size-3 stroke-[3]" />
+          </div>
+        </>
+      ) : (
+        children
+      )}
+    </div>
+  );
 };

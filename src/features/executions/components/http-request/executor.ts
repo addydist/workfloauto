@@ -5,7 +5,7 @@ import HandleBars from "handlebars";
 import { Realtime } from "@inngest/realtime";
 import { httpRequestChannel } from "@/inngest/channels/http-request";
 type httpRequestData = {
-  variableName: string;
+  variableName?: string;
   endpoint: string;
   method: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   body?: string;
@@ -28,43 +28,44 @@ export const httpRequestExecutor: NodeExecutor<httpRequestData> = async ({
       status: "loading",
     })
   );
-  if (!data.endpoint) {
-    await publish(
-      httpRequestChannel().status({
-        nodeId,
-        status: "error",
-      })
-    );
-    throw new NonRetriableError(
-      `Endpoint is required for HTTP Request node: ${nodeId}`
-    );
-  }
-  if (!data.variableName) {
-    await publish(
-      httpRequestChannel().status({
-        nodeId,
-        status: "error",
-      })
-    );
-    throw new NonRetriableError(
-      `VaraibleName is required for HTTP Request node: ${nodeId}`
-    );
-  }
-  if (!data.method) {
-    await publish(
-      httpRequestChannel().status({
-        nodeId,
-        status: "loading",
-      })
-    );
-    throw new NonRetriableError(
-      `Method is required for HTTP Request node: ${nodeId}`
-    );
-  }
+ 
   try {
     const result = await step.run(`http-request`, async () => {
       const endpoint = HandleBars.compile(data.endpoint)(context);
       const method = data.method;
+      if (!data.endpoint) {
+        await publish(
+          httpRequestChannel().status({
+            nodeId,
+            status: "error",
+          })
+        );
+        throw new NonRetriableError(
+          `Endpoint is required for HTTP Request node: ${nodeId}`
+        );
+      }
+      if (!data.variableName) {
+        await publish(
+          httpRequestChannel().status({
+            nodeId,
+            status: "error",
+          })
+        );
+        throw new NonRetriableError(
+          `VaraibleName is required for HTTP Request node: ${nodeId}`
+        );
+      }
+      if (!data.method) {
+        await publish(
+          httpRequestChannel().status({
+            nodeId,
+            status: "loading",
+          })
+        );
+        throw new NonRetriableError(
+          `Method is required for HTTP Request node: ${nodeId}`
+        );
+      }
       const options: KyOptions = {
         method,
       };
