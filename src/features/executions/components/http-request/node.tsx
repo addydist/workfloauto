@@ -12,6 +12,7 @@ import { BaseExecutionNode } from "../base-execution-node";
 import { HttpRequestFormValues, HttpRequestDialog } from "./dialog";
 import { useNodeStatus } from "../../hooks/usee-node-status";
 import { getHttpRequestRealtimeToken } from "./actions";
+import { HTTP_TRIGGER_CHANNEL_NAME } from "@/inngest/channels/http-request";
 
 type HttpRequestNodeData = {
   variableName?: string;
@@ -30,7 +31,7 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
     : "No endpoint configured";
   const nodeStatus = useNodeStatus({
     nodeId: props.id,
-    channel: "http-request-execution",
+    channel: HTTP_TRIGGER_CHANNEL_NAME,
     topic: "status",
     refreshToken:getHttpRequestRealtimeToken,
 });

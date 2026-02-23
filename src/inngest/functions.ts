@@ -7,13 +7,15 @@ import { NodeType } from "@/generated/prisma";
 import { getExecutor } from "@/features/executions/lib/executor-registry";
 import { httpRequestChannel } from "./channels/http-request";
 import { manualTriggerChannel } from "./channels/manual-request";
+import { googleFromTriggerChannel } from "./channels/google-form-trigger";
 const google = createGoogleGenerativeAI();
 export const executeWorkflow = inngest.createFunction(
   { id: "execute-workflow",retries: 0 },
   { event: "workflow/execute.workflow" ,
     channels:[
       httpRequestChannel(),
-      manualTriggerChannel()
+      manualTriggerChannel(),
+      googleFromTriggerChannel(),
     ]
   },
   async ({ event, step,publish }) => {
