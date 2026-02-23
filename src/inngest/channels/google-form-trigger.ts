@@ -1,7 +1,7 @@
 import { channel,topic } from "@inngest/realtime";
-export const HTTP_TRIGGER_CHANNEL_NAME="http-request-execution"
+export const GOOGLE_FORM_TRIGGER_CHANNEL_NAME = "google-form-trigger-execution";  
 
-export const httpRequestChannel = channel(HTTP_TRIGGER_CHANNEL_NAME).
+export const googleFromTriggerChannel = channel(GOOGLE_FORM_TRIGGER_CHANNEL_NAME).
 addTopic(
     topic("status").type<{
         nodeId: string,
