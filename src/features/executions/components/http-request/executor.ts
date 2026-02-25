@@ -2,7 +2,6 @@ import type { NodeExecutor } from "@/features/executions/types";
 import { NonRetriableError } from "inngest";
 import ky, { type Options as KyOptions } from "ky";
 import HandleBars from "handlebars";
-import { Realtime } from "@inngest/realtime";
 import { httpRequestChannel } from "@/inngest/channels/http-request";
 type httpRequestData = {
   variableName?: string;
