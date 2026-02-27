@@ -5,9 +5,10 @@ import { generateText } from "ai";
 
 import { NonRetriableError } from "inngest";
 import { anthropicChannel } from "@/inngest/channels/anthropic";
+import prisma from "@/lib/db";
 type AnthropicisData = {
   variableName?: string;
-  model?:string;
+  credentialId?:string;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -47,13 +48,31 @@ export const anthropicExecutor: NodeExecutor<AnthropicisData> = async ({
     );
     throw new NonRetriableError("Open ai node:User prompt  is required");
   }
+  if (!data.credentialId) {
+    await publish(
+      anthropicChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("Anthropic node:Credential  is required");
+  }
   const systemPrompt = data.systemPrompt
     ? HandleBars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
   const userPrompt = HandleBars.compile(data.userPrompt)(context);
-  const credentials = process.env.ANTHROPIC_GENERATIVE_AI_API_KEY!;
+  const credential=await step.run("get-credential",()=>{
+    return prisma.credential.findUnique({
+      where:{
+        id:data.credentialId
+      }
+    })
+  })
+  if(!credential){
+    throw new NonRetriableError("Gemini node:Credential not found ");
+  }
   const anthropic = createAnthropic({
-    apiKey: credentials,
+    apiKey: credential.value,
   });
   try {
     const { steps } = await step.ai.wrap("anthropic-generate-text", generateText, {
