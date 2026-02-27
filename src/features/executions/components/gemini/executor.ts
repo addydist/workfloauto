@@ -5,9 +5,10 @@ import { generateText } from "ai";
 import { geminiChannel } from "@/inngest/channels/gemini";
 ;
 import { NonRetriableError } from "inngest";
+import prisma from "@/lib/db";
 type GeminiData = {
   variableName?: string;
-  model?:string;
+  credentialId?:string;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -47,17 +48,36 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     );
     throw new NonRetriableError("Gemini node:User prompt  is required");
   }
+  if (!data.credentialId) {
+    await publish(
+      geminiChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("Gemini node:Credebtial  is required");
+  }
   const systemPrompt = data.systemPrompt
     ? HandleBars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
   const userPrompt = HandleBars.compile(data.userPrompt)(context);
-  const credentials = process.env.GOOGLE_GENERATIVE_AI_API_KEY!;
+  const credential=await step.run("get-credential",()=>{
+    return prisma.credential.findUnique({
+      where:{
+        id:data.credentialId
+      }
+    })
+  })
+  if(!credential){
+    throw new NonRetriableError("Gemini node:Credential not found ");
+  }
+  // const credentials = process.env.GOOGLE_GENERATIVE_AI_API_KEY!;
   const google = createGoogleGenerativeAI({
-    apiKey: credentials,
+    apiKey: credential.value,
   });
   try {
     const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {
-      model: google(data.model || "gemini-2.5-flash"),
+      model: google("gemini-2.5-flash"),
       system: systemPrompt,
       prompt: userPrompt,
       experimental_telemetry: {

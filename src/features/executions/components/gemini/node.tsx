@@ -16,7 +16,7 @@ import { GEMINI_CHANNEL_NAME } from "@/inngest/channels/gemini";
 
 type GeminiNodeData = {
   variableName?: string;
-  model?: string ;
+  credentialId?: string ;
   systemPrompt?: string;
   userPrompt?: string;
 };
@@ -27,7 +27,7 @@ export const GeminiNode = memo((props: NodeProps<GeminiRequestNodeType>) => {
   const nodeData = props.data;
   const [DialogOpen, setDialogOpen] = useState(false);
   const description = nodeData.userPrompt
-    ? `${nodeData.model || AVAILABLE_MODELS[0]} ${nodeData.userPrompt.slice(0,50)}...`
+    ? `gpt-4o-mini: ${nodeData.userPrompt.slice(0,50)}...`
     : "No endpoint configured";
   const nodeStatus = useNodeStatus({
     nodeId: props.id,
