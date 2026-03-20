@@ -6,6 +6,7 @@ import { geminiChannel } from "@/inngest/channels/gemini";
 ;
 import { NonRetriableError } from "inngest";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 type GeminiData = {
   variableName?: string;
   credentialId?:string;
@@ -75,7 +76,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
   }
   // const credentials = process.env.GOOGLE_GENERATIVE_AI_API_KEY!;
   const google = createGoogleGenerativeAI({
-    apiKey: credential.value,
+    apiKey: decrypt(credential.value),
   });
   try {
     const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {

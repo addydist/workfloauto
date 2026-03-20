@@ -6,6 +6,7 @@ import { generateText } from "ai";
 import { NonRetriableError } from "inngest";
 import { anthropicChannel } from "@/inngest/channels/anthropic";
 import prisma from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 type AnthropicisData = {
   variableName?: string;
   credentialId?:string;
@@ -74,7 +75,7 @@ export const anthropicExecutor: NodeExecutor<AnthropicisData> = async ({
     throw new NonRetriableError("Gemini node:Credential not found ");
   }
   const anthropic = createAnthropic({
-    apiKey: credential.value,
+    apiKey: decrypt(credential.value),
   });
   try {
     const { steps } = await step.ai.wrap("anthropic-generate-text", generateText, {
