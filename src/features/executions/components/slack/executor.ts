@@ -28,7 +28,6 @@ export const slackExecutor: NodeExecutor<SlackData> = async ({
       status: "loading",
     }),
   );
-  console.log("data",data);
   if (!data.content) {
     await publish(
       slackChannel().status({
