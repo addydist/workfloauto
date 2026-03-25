@@ -13,23 +13,34 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: true,
   },
+  socialProviders: {
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    },
+    google:{ 
+            clientId: process.env.GOOGLE_CLIENT_ID as string, 
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
+    }, 
+  },
   plugins: [
     polar({
-        client: polarClient,
-        createCustomerOnSignUp: true,
-        use: [
-            checkout({
-                products: [
-                    {
-                        productId: "5445093a-94ca-486b-8f48-9326986d8165",
-                        slug: "Nodeflo-pro" // Custom slug for easy reference in Checkout URL, e.g. /checkout/Nodeflo-pro
-                    }
-                ],
-                successUrl: process.env.POLAR_SUCCESS_URL,
-                authenticatedUsersOnly: true
-            }),
-            portal(),
-        ],
-    })
-]
+      client: polarClient,
+      createCustomerOnSignUp: true,
+      use: [
+        checkout({
+          products: [
+            {
+              productId: "5445093a-94ca-486b-8f48-9326986d8165",
+              slug: "Nodeflo-pro", // Custom slug for easy reference in Checkout URL, e.g. /checkout/Nodeflo-pro
+            },
+          ],
+          successUrl: process.env.POLAR_SUCCESS_URL,
+          authenticatedUsersOnly: true,
+        }),
+        portal(),
+      ],
+    }),
+  ],
+ 
 });
