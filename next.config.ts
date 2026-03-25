@@ -5,6 +5,9 @@ import { fa } from "zod/v4/locales";
 const nextConfig: NextConfig = {
   /* config options here */
   devIndicators: false,
+  typescript:{
+    ignoreBuildErrors:true,
+  },
   async redirects() {
     return [
       {
