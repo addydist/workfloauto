@@ -47,6 +47,30 @@ export function LoginForm() {
       password: "",
     },
   });
+  const signInGithub = async () => {
+    await authClient.signIn.social({
+        provider: "github"
+    },{
+      onSuccess:()=>{
+        router.push("/")
+      },
+      onError:()=>{
+        toast.error("Something went wrong")
+      }
+    })
+}
+  const signInGoogle = async () => {
+    await authClient.signIn.social({
+        provider: "google"
+    },{
+      onSuccess:()=>{
+        router.push("/")
+      },
+      onError:()=>{
+        toast.error("Something went wrong")
+      }
+    })
+}
   const onSubmit = async (data: LoginFormValues) => {
     await authClient.signIn.email(
       {
@@ -76,6 +100,7 @@ export function LoginForm() {
         {/* Social Login */}
         <div className="space-y-2">
           <Button
+            onClick={signInGithub}
             variant="outline"
             type="button"
             disabled={isPending}
@@ -86,6 +111,7 @@ export function LoginForm() {
           </Button>
   
           <Button
+            onClick={signInGoogle}
             variant="outline"
             type="button"
             disabled={isPending}
