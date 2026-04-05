@@ -1,4 +1,8 @@
 import { Inngest } from "inngest";
 import { realtimeMiddleware } from "@inngest/realtime/middleware";
 // Create a client to send and receive events
-export const inngest = new Inngest({ id: "nodefloo",middleware:[realtimeMiddleware()] });
+export const inngest = new Inngest({
+    id: "nodefloo",
+    eventKey: process.env.INNGEST_EVENT_KEY,
+    middleware: [realtimeMiddleware()]
+});
