@@ -10,7 +10,7 @@ import { useWorkflowParams } from "./use-workflow-params";
 
 export const useSuspenseWorkflows = () => {
   const trpc = useTRPC();
-  const [params]=useWorkflowParams();
+  const [params] = useWorkflowParams();
   return useSuspenseQuery(trpc.workflows.getMany.queryOptions(params));
 };
 export const useCreateWorkflow = () => {
@@ -54,9 +54,9 @@ export const useRemoveWorkflow = () => {
 }
 
 
-export const useSuspenseWorkflow=(id:string)=>{
+export const useSuspenseWorkflow = (id: string) => {
   const trpc = useTRPC();
-  return useSuspenseQuery(trpc.workflows.getOne.queryOptions({id}));
+  return useSuspenseQuery(trpc.workflows.getOne.queryOptions({ id }));
 }
 
 export const useUpdateWorkflowName = () => {
@@ -71,7 +71,7 @@ export const useUpdateWorkflowName = () => {
           trpc.workflows.getMany.queryOptions({})
         );
         queryClient.invalidateQueries(
-          trpc.workflows.getOne.queryOptions({id: data.id})
+          trpc.workflows.getOne.queryOptions({ id: data.id })
         );
       },
       onError: (error) => {
@@ -92,7 +92,7 @@ export const useUpdateWorkflow = () => {
           trpc.workflows.getMany.queryOptions({})
         );
         queryClient.invalidateQueries(
-          trpc.workflows.getOne.queryOptions({id: data.id})
+          trpc.workflows.getOne.queryOptions({ id: data.id })
         );
       },
       onError: (error) => {
@@ -108,12 +108,12 @@ export const useExecuteWorkflow = () => {
   return useMutation(
     trpc.workflows.execute.mutationOptions({
       onSuccess: (data) => {
-        toast.success(`Workflow ${data.name} saved`);
+        toast.success(`Workflow ${data.name} executed`);
         queryClient.invalidateQueries(
           trpc.workflows.getMany.queryOptions({})
         );
         queryClient.invalidateQueries(
-          trpc.workflows.getOne.queryOptions({id: data.id})
+          trpc.workflows.getOne.queryOptions({ id: data.id })
         );
       },
       onError: (error) => {
