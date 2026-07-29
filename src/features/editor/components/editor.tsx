@@ -29,6 +29,9 @@ import { ExecuteWorkflowButton } from "./execute-workflow-button";
 export const EditorError = () => {
   return <ErrorView message="Failed to load editor." />;
 };
+export const EditorLoading = () => {
+  return <LoadingView message="Loading editor..." />;
+};
 export const Editor = ({ workflowId }: { workflowId: string }) => {
   const { data: workflow } = useSuspenseWorkflow(workflowId);
   const setEditor=useSetAtom(editorAtom);
