@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useReactFlow } from "@xyflow/react";
-import { GlobeIcon, MousePointer2Icon, WebhookIcon } from "lucide-react";
+import { GitBranchIcon, GlobeIcon, MousePointer2Icon, WebhookIcon } from "lucide-react";
 import { createId } from "@paralleldrive/cuid2";
 import {
   Sheet,
@@ -83,6 +83,15 @@ const excecutorNodes: NodeTypeOption[] = [
     label: "Slack",
     description: "Send a message to Slack ",
     icon: "/logos/slack.svg",
+  },
+];
+
+const logicNodes: NodeTypeOption[] = [
+  {
+    type: NodeType.CONDITION,
+    label: "Condition",
+    description: "Branch the workflow based on a true/false comparison.",
+    icon: GitBranchIcon,
   },
 ];
 interface NodeSelectorProps {
@@ -183,6 +192,41 @@ export function NodeSelector({
 
         <div className="space-y-2">
           {excecutorNodes.map((nodeType) => {
+            const Icon = nodeType.icon;
+
+            return (
+              <div
+                key={nodeType.type}
+                className="flex items-start gap-4 px-4 py-3 cursor-pointer border-l-2 border-transparent hover:bg-accent/50 hover:border-primary transition"
+                onClick={() => handleNodeSelect(nodeType)}
+              >
+                <div className="shrink-0 mt-0.5">
+                  {typeof Icon === "string" ? (
+                    <img
+                      src={Icon}
+                      alt={nodeType.label}
+                      className="w-5 h-5 object-contain"
+                    />
+                  ) : (
+                    <Icon className="w-5 h-5" />
+                  )}
+                </div>
+
+                <div className="flex flex-col text-left">
+                  <span className="text-sm font-medium">{nodeType.label}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {nodeType.description}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <Separator className="my-4" />
+
+        <div className="space-y-2">
+          {logicNodes.map((nodeType) => {
             const Icon = nodeType.icon;
 
             return (
