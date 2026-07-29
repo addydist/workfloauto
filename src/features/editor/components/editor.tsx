@@ -21,6 +21,7 @@ import {
 import "@xyflow/react/dist/style.css";
 import { nodeComponents } from "@/config/node-components";
 import { AddNodeButton } from "./add-node-button";
+import { useTheme } from "next-themes";
 import { useSetAtom } from "jotai";
 import { editorAtom } from "../store/atom";
 import { NodeType } from "@/generated/prisma";
@@ -34,6 +35,7 @@ export const EditorLoading = () => {
 };
 export const Editor = ({ workflowId }: { workflowId: string }) => {
   const { data: workflow } = useSuspenseWorkflow(workflowId);
+  const { resolvedTheme } = useTheme();
   const setEditor=useSetAtom(editorAtom);
   const [nodes, setNodes] = useState<Node[]>(workflow?.nodes);
   const [edges, setEdges] = useState<Edge[]>(workflow?.edges);
@@ -65,6 +67,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         onConnect={onConnect}
         nodeTypes={nodeComponents}
         onInit={setEditor}
+        colorMode={resolvedTheme === "dark" ? "dark" : "light"}
         fitView
         snapGrid={[10, 10]}
         snapToGrid
