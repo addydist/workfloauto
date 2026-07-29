@@ -24,21 +24,13 @@ branching logic, live execution status, and per-run history.
 
 ## 🎥 Demo
 
-<!-- ▼▼▼ ADD YOUR VIDEO ON THIS LINE ▼▼▼ -->
+<div align="center">
 
-https://github.com/user-attachments/assets/REPLACE-WITH-YOUR-VIDEO
+[![Watch the Nodeflo demo](https://img.youtube.com/vi/o4csOLXTzwk/maxresdefault.jpg)](https://www.youtube.com/watch?v=o4csOLXTzwk)
 
-<!-- ▲▲▲ -->
+▶️ **[Watch the full demo on YouTube](https://www.youtube.com/watch?v=o4csOLXTzwk)**
 
-> **How to add the demo video:** open this README on GitHub → click the ✏️ (Edit)
-> button → **drag your `.mp4`/`.mov` file onto the line above**. GitHub uploads it
-> and replaces the line with a `user-attachments` link that renders as an inline
-> player (max 100 MB).
->
-> Prefer YouTube/Loom? Swap the line for a clickable thumbnail instead:
-> ```md
-> [![Watch the demo](docs/thumbnail.png)](https://youtu.be/YOUR_VIDEO_ID)
-> ```
+</div>
 
 <!-- Screenshot: drop editor.png into a docs/ folder and uncomment the line below -->
 <!-- ![The Nodeflo editor](docs/editor.png) -->
