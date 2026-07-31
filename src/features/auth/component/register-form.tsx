@@ -56,7 +56,7 @@ export function RegisterForm() {
           provider: "github"
       },{
         onSuccess:()=>{
-          router.push("/")
+          router.push("/workflows")
         },
         onError:()=>{
           toast.error("Something went wrong")
@@ -68,7 +68,7 @@ export function RegisterForm() {
           provider: "google"
       },{
         onSuccess:()=>{
-          router.push("/")
+          router.push("/workflows")
         },
         onError:()=>{
           toast.error("Something went wrong")
@@ -80,10 +80,10 @@ export function RegisterForm() {
     name:values.email,
     email: values.email,
     password: values.password,
-    callbackURL:'/'
+    callbackURL:'/workflows'
    },
   { onSuccess: () => {
-    router.push('/');
+    router.push('/workflows');
   },
   onError: (ctx) => {
     toast.error(ctx.error.message);
@@ -91,10 +91,12 @@ export function RegisterForm() {
   };
   const isPending = form.formState.isSubmitting;
   return (
-    <Card className="w-full">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Get Started</CardTitle>
-        <CardDescription>Create your account to get started</CardDescription>
+    <Card className="w-full border-0 bg-transparent shadow-none">
+      <CardHeader className="px-0">
+        <CardTitle className="font-display text-3xl font-semibold tracking-tight">
+          Create your account
+        </CardTitle>
+        <CardDescription>Start automating in minutes.</CardDescription>
       </CardHeader>
   
       <CardContent className="space-y-6">

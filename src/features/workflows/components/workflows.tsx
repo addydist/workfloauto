@@ -17,7 +17,7 @@ import { useWorkflowParams } from "../hooks/use-workflow-params";
 import { useEntitySearch } from "@/hooks/use-entity-search";
 import Error from "next/error";
 import { Workflow } from "@/generated/prisma";
-import { WorkflowIcon } from "lucide-react";
+import { ClockIcon, WorkflowIcon } from "lucide-react";
 import {formatDistanceToNow} from "date-fns"
 
 export const WorkFlowSearch = () => {
@@ -149,10 +149,15 @@ export const WorkflowItem = ({ data }: { data: Workflow }) => {
     <EntityItem
       href={`/workflows/${data.id}`}
       title={data.name}
-      subtitle={<>Updated {formatDistanceToNow(data.updatedAt,{addSuffix:true})} &bull; Created {formatDistanceToNow(data.createdAt,{addSuffix:true})} </>}
+      subtitle={
+        <span className="inline-flex items-center gap-1.5">
+          <ClockIcon className="size-3" />
+          Updated {formatDistanceToNow(data.updatedAt, { addSuffix: true })} &bull; Created {formatDistanceToNow(data.createdAt, { addSuffix: true })}
+        </span>
+      }
       image={
-        <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center">
-          <WorkflowIcon className="size-5 text-muted-foreground" />
+        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center">
+          <WorkflowIcon className="size-5 text-primary" />
         </div>
       }
       onRemove={handleRemove}

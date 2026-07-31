@@ -210,3 +210,61 @@
 .react-flow__node.selected #base-node {
   @apply ring-3 ring-muted-foreground/25 shadow-lg;
 }
+
+/* --- Brand / marketing utilities ------------------------------------- */
+
+/* Display typeface for headings and hero copy. */
+.font-display {
+  font-family: var(--font-display), var(--font-sans), ui-sans-serif, sans-serif;
+}
+
+/* Warm near-black canvas used by the landing + auth brand panel. */
+.brand-canvas {
+  background-color: oklch(0.16 0.006 60);
+}
+
+/* Soft orange mesh glow. Layer behind hero/auth content. */
+.brand-mesh {
+  background-image:
+    radial-gradient(60rem 60rem at 15% 10%, rgba(255, 122, 0, 0.16), transparent 55%),
+    radial-gradient(45rem 45rem at 85% 30%, rgba(255, 151, 54, 0.12), transparent 55%),
+    radial-gradient(50rem 50rem at 60% 100%, rgba(255, 122, 0, 0.1), transparent 60%);
+}
+
+/* Subtle film grain. Apply to an inset, pointer-events-none overlay. */
+.brand-grain {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+}
+
+/* Slow drift for decorative brand elements. */
+@keyframes brand-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.brand-float {
+  animation: brand-float 6s ease-in-out infinite;
+}
+
+/* Flowing dashes along connector paths. */
+@keyframes brand-dash {
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+.brand-dash {
+  stroke-dasharray: 4 6;
+  animation: brand-dash 1.2s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-float,
+  .brand-dash {
+    animation: none;
+  }
+}

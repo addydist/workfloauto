@@ -52,7 +52,7 @@ export function LoginForm() {
         provider: "github"
     },{
       onSuccess:()=>{
-        router.push("/")
+        router.push("/workflows")
       },
       onError:()=>{
         toast.error("Something went wrong")
@@ -64,7 +64,7 @@ export function LoginForm() {
         provider: "google"
     },{
       onSuccess:()=>{
-        router.push("/")
+        router.push("/workflows")
       },
       onError:()=>{
         toast.error("Something went wrong")
@@ -76,11 +76,11 @@ export function LoginForm() {
       {
         email: data.email,
         password: data.password,
-        callbackURL: "/",
+        callbackURL: "/workflows",
       },
       {
         onSuccess: () => {
-          router.push("/");
+          router.push("/workflows");
         },
         onError: (ctx) => {
           toast.error(ctx.error.message);
@@ -90,10 +90,12 @@ export function LoginForm() {
   };
   const isPending = form.formState.isSubmitting;
   return (
-    <Card className="w-full">
-      <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome Back</CardTitle>
-        <CardDescription>Login to continue</CardDescription>
+    <Card className="w-full border-0 bg-transparent shadow-none">
+      <CardHeader className="px-0">
+        <CardTitle className="font-display text-3xl font-semibold tracking-tight">
+          Welcome back
+        </CardTitle>
+        <CardDescription>Log in to continue to Nodeflo.</CardDescription>
       </CardHeader>
   
       <CardContent className="space-y-6">

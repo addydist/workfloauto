@@ -59,7 +59,7 @@ export const EntityHeader = ({
   return (
     <div className="flex flex-row items-center justify-between gap-x-4">
       <div className="flex flex-col">
-        <h1 className="text-lg md:text-xl font font-semibold">{title}</h1>
+        <h1 className="font-display text-xl md:text-2xl font-semibold tracking-tight">{title}</h1>
         {description && (
           <p className="text-xs md:text-sm text-muted-foreground">
             {description}
@@ -301,7 +301,7 @@ export const EntityItem = ({
     <Link href={href} prefetch>
       <Card
         className={cn(
-          "p-4 shadow-none hover:shadow cursor-pointer",
+          "p-4 shadow-none cursor-pointer transition-all hover:border-primary/40 hover:shadow-md",
           isRemoving && "opacity-50 cursor-not-allowed",
           classname
         )}
