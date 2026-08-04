@@ -193,9 +193,9 @@ export const GeminiDialog = ({
                 name="userPrompt"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>System prompt</FormLabel>
+                    <FormLabel>User prompt</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder='Summarize the following article: {{jsonhttpResponse.data}}'
                         className="min-h-[120px] font-mono text-sm" 
                         {...field} 
