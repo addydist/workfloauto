@@ -6,8 +6,9 @@
 
 **Build, automate, and run visual workflows — no code required.**
 
-A self-hostable, n8n-style workflow automation platform. Drag nodes onto a canvas,
-wire them together, and let AI, HTTP calls, and messaging apps do the work — with
+A self-hostable, n8n-style workflow automation platform. **Describe what you want in
+plain English and let AI build the workflow** — or drag nodes onto a canvas yourself,
+wire them together, and let AI, HTTP calls, and messaging apps do the work. With
 branching logic, live execution status, and per-run history.
 
 ![Next.js](https://img.shields.io/badge/Next.js-15-000?logo=next.js&logoColor=white)
@@ -26,9 +27,9 @@ branching logic, live execution status, and per-run history.
 
 <div align="center">
 
-[![Watch the Nodeflo demo](https://img.youtube.com/vi/o4csOLXTzwk/maxresdefault.jpg)](https://www.youtube.com/watch?v=o4csOLXTzwk)
+[![Watch the Nodeflo demo](https://img.youtube.com/vi/9Bs-OAyQx4I/maxresdefault.jpg)](https://www.youtube.com/watch?v=9Bs-OAyQx4I)
 
-▶️ **[Watch the full demo on YouTube](https://www.youtube.com/watch?v=o4csOLXTzwk)**
+▶️ **[Watch the full demo on YouTube](https://www.youtube.com/watch?v=9Bs-OAyQx4I)**
 
 </div>
 
@@ -39,6 +40,7 @@ branching logic, live execution status, and per-run history.
 
 ## ✨ What it does
 
+- 🪄 **Generate with AI** — describe a workflow in plain English; Nodeflo builds the nodes, wires them, and pre-fills their config. Free via OpenRouter models.
 - 🎨 **Visual editor** — a React Flow canvas. Add nodes, drag to connect, double-click to configure.
 - ⚡ **Durable execution** — workflows run on [Inngest](https://www.inngest.com/); each step is retried and recorded.
 - 🟢 **Live status** — nodes light up **loading → success → error** in real time as a run progresses.
@@ -65,7 +67,21 @@ branching logic, live execution status, and per-run history.
 
 ---
 
-## 🚀 Build your first workflow
+## 🪄 Generate with AI
+
+Don't want to build by hand? Click **Generate with AI** on the canvas, describe what you
+want in plain English, and Nodeflo generates the whole graph — nodes placed, wired, and
+pre-configured. Preview the steps, hit **Insert**, then fill in credentials and Save.
+
+> *"Ask AI how many states India has; if it's more than 28, post a 🎉 message to Discord, otherwise a plain one."*
+
+- **Free to run** — set one `OPENROUTER_API_KEY` and generation uses free [OpenRouter](https://openrouter.ai) models, so it costs nothing and never burns a user's own quota.
+- **Graceful fallback** — uses the user's own Gemini / OpenAI / Anthropic credential when no platform key is set.
+- **Flag-gated** — disable anytime with `NEXT_PUBLIC_ENABLE_AI_BUILDER=false`.
+
+---
+
+## 🚀 Build your first workflow (manually)
 
 A real example: **ask Gemini a question, branch on the answer, then act.**
 
@@ -115,7 +131,7 @@ other branch are skipped. Each node publishes realtime status back to the canvas
 | Database | **PostgreSQL** · **Prisma 6** |
 | Execution | **Inngest** (durable steps + realtime) |
 | Canvas | **React Flow** (`@xyflow/react`) |
-| AI | **Vercel AI SDK** — Gemini, OpenAI, Anthropic |
+| AI | **Vercel AI SDK** — Gemini · OpenAI · Anthropic · OpenRouter (free models) |
 | Auth | **better-auth** (email · GitHub · Google) |
 | Billing | **Polar** |
 | Templating | **Handlebars** (variable interpolation) |
@@ -142,6 +158,7 @@ cp .env.example .env
 ```
 Fill in `.env` — the required keys are documented inline in [`.env.example`](.env.example).
 At minimum you need `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `ENCRYPTION_KEY`.
+Optionally set `OPENROUTER_API_KEY` to power free **Generate with AI** for everyone.
 
 ### 3. Set up the database
 ```bash
@@ -183,7 +200,7 @@ src/
 ├── components/               # Shared UI + React Flow primitives
 ├── config/                   # Node registry (node-components.ts)
 ├── features/
-│   ├── editor/               # Canvas, header, save/execute
+│   ├── editor/               # Canvas, header, save/execute + ai/ (Generate with AI)
 │   ├── triggers/             # Manual · Google Form · Stripe
 │   ├── executions/           # Action & logic nodes + run history
 │   │   └── components/
