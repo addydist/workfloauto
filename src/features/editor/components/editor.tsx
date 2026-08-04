@@ -21,8 +21,12 @@ import {
 import "@xyflow/react/dist/style.css";
 import { nodeComponents } from "@/config/node-components";
 import { AddNodeButton } from "./add-node-button";
+import { AiWorkflowGenerator } from "./ai-generate-dialog";
 import { useTheme } from "next-themes";
 import { useSetAtom } from "jotai";
+
+const AI_BUILDER_ENABLED =
+  process.env.NEXT_PUBLIC_ENABLE_AI_BUILDER !== "false";
 import { editorAtom } from "../store/atom";
 import { NodeType } from "@/generated/prisma";
 import { ExecuteWorkflowButton } from "./execute-workflow-button";
@@ -78,6 +82,11 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         <Background />
         <Controls/>
         <MiniMap/>
+        {AI_BUILDER_ENABLED && (
+          <Panel position="top-left">
+            <AiWorkflowGenerator />
+          </Panel>
+        )}
         <Panel position="top-right">
           <AddNodeButton/>
         </Panel>
