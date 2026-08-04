@@ -115,6 +115,24 @@ Return JSON shaped exactly like this example (fill data fields — never leave a
     { "from": "start", "to": "fact" },
     { "from": "fact", "to": "post" }
   ]
+}
+
+Example WITH a condition branch — request: "Ask how many states India has; if more than 28, post a 'many' message to Discord, otherwise a 'few' message":
+{
+  "title": "India state check",
+  "nodes": [
+    { "key": "start", "type": "MANUAL_TRIGGER", "data": {} },
+    { "key": "count", "type": "GEMINI", "data": { "variableName": "count", "userPrompt": "How many states does India have? Reply with only the number." } },
+    { "key": "check", "type": "CONDITION", "data": { "leftValue": "{{count.text}}", "operator": "greater_than", "rightValue": "28" } },
+    { "key": "many", "type": "DISCORD", "data": { "variableName": "many_msg", "content": "India has many states — {{count.text}}!" } },
+    { "key": "few", "type": "DISCORD", "data": { "variableName": "few_msg", "content": "India has only {{count.text}} states." } }
+  ],
+  "connections": [
+    { "from": "start", "to": "count" },
+    { "from": "count", "to": "check" },
+    { "from": "check", "to": "many", "branch": "true" },
+    { "from": "check", "to": "few", "branch": "false" }
+  ]
 }`;
 
 // A capable free OpenRouter model (overridable). OpenRouter is OpenAI-compatible.
