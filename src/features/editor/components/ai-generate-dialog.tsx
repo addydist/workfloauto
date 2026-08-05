@@ -23,17 +23,21 @@ const EXAMPLES = [
   "Ask AI how many states India has; if it's more than 20, post to Slack",
 ];
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 export const AiWorkflowGenerator = () => {
   const { getNodes, setNodes, setEdges, fitView } = useReactFlow();
   const [open, setOpen] = useState(false);
   const [prompt, setPrompt] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<GenerateResult | null>(null);
+  const [building, setBuilding] = useState(false);
 
   const reset = () => {
     setPrompt("");
     setResult(null);
     setLoading(false);
+    setBuilding(false);
   };
 
   const handleGenerate = async () => {
@@ -50,31 +54,73 @@ export const AiWorkflowGenerator = () => {
     }
   };
 
-  const handleInsert = () => {
-    if (!result || !result.ok) return;
+  // "Watch it build": place nodes one-by-one in flow order, drawing each
+  // incoming connector as its target node appears, camera following along.
+  const handleInsert = async () => {
+    if (!result || !result.ok || building) return;
+    const graph = result;
+    setBuilding(true);
+    setOpen(false);
+
     const existing = getNodes();
     const meaningful = existing.filter((n) => n.type !== "INITIAL");
+    const offsetY =
+      meaningful.length === 0
+        ? 0
+        : Math.max(0, ...existing.map((n) => n.position?.y ?? 0)) + 240;
 
+    // Fresh canvas → clear the placeholder Initial node and start empty.
     if (meaningful.length === 0) {
-      setNodes(result.nodes as Node[]);
-      setEdges(result.edges as Edge[]);
-    } else {
-      const maxY = Math.max(0, ...existing.map((n) => n.position?.y ?? 0));
-      const offsetY = maxY + 240;
-      setNodes((nds) => [
-        ...nds,
-        ...result.nodes.map((n) => ({
-          ...n,
-          position: { x: n.position.x, y: n.position.y + offsetY },
-        })),
-      ] as Node[]);
-      setEdges((eds) => [...eds, ...(result.edges as Edge[])]);
+      setNodes([]);
+      setEdges([]);
     }
 
-    toast.success("Workflow added. Fill in credentials / webhook URLs, then Save.");
-    setOpen(false);
+    const ordered = graph.nodes
+      .map((n) => ({
+        ...n,
+        position: { x: n.position.x, y: n.position.y + offsetY },
+        className: "wb-node-enter",
+      }))
+      .sort(
+        (a, b) => a.position.x - b.position.x || a.position.y - b.position.y,
+      );
+
+    const placed = new Set<string>();
+    const addedEdges = new Set<string>();
+
+    for (const node of ordered) {
+      placed.add(node.id);
+      setNodes((nds) => [...nds, node as Node]);
+
+      const ready = graph.edges.filter(
+        (e) =>
+          placed.has(e.source) && placed.has(e.target) && !addedEdges.has(e.id),
+      );
+      if (ready.length) {
+        ready.forEach((e) => addedEdges.add(e.id));
+        setEdges((eds) => [
+          ...eds,
+          ...ready.map((e) => ({ ...e, className: "wb-edge-draw" })),
+        ] as Edge[]);
+      }
+
+      await sleep(420);
+      fitView({ duration: 350, padding: 0.3 });
+    }
+
+    // Safety: any edges not yet drawn (e.g. odd ordering).
+    const remaining = graph.edges.filter((e) => !addedEdges.has(e.id));
+    if (remaining.length) {
+      setEdges((eds) => [
+        ...eds,
+        ...remaining.map((e) => ({ ...e, className: "wb-edge-draw" })),
+      ] as Edge[]);
+    }
+
+    await sleep(150);
+    fitView({ duration: 400, padding: 0.25 });
+    toast.success("Workflow built! Fill in credentials / webhook URLs, then Save.");
     reset();
-    setTimeout(() => fitView({ duration: 400 }), 50);
   };
 
   return (
@@ -161,14 +207,17 @@ export const AiWorkflowGenerator = () => {
                 <Button
                   variant="ghost"
                   onClick={handleGenerate}
-                  disabled={loading}
+                  disabled={loading || building}
                 >
                   {loading ? (
                     <Loader2Icon className="size-4 animate-spin" />
                   ) : null}
                   Regenerate
                 </Button>
-                <Button onClick={handleInsert}>Insert into canvas</Button>
+                <Button onClick={handleInsert} disabled={building}>
+                  <SparklesIcon className="size-4" />
+                  {building ? "Building…" : "Build it"}
+                </Button>
               </>
             ) : (
               <Button

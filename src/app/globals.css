@@ -211,6 +211,42 @@
   @apply ring-3 ring-muted-foreground/25 shadow-lg;
 }
 
+/* --- "Watch it build" generation animation ---------------------------- */
+/* Nodes fade in (opacity only — transform is owned by React Flow's translate). */
+@keyframes wb-node-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.react-flow__node.wb-node-enter {
+  animation: wb-node-in 0.35s ease both;
+}
+
+/* Connectors draw themselves in. */
+@keyframes wb-edge-in {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.react-flow__edge.wb-edge-draw .react-flow__edge-path {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: wb-edge-in 0.5s ease forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .react-flow__node.wb-node-enter {
+    animation: none;
+  }
+  .react-flow__edge.wb-edge-draw .react-flow__edge-path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+}
+
 /* --- Brand / marketing utilities ------------------------------------- */
 
 /* Display typeface for headings and hero copy. */
