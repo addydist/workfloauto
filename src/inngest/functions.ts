@@ -15,6 +15,7 @@ import { anthropicChannel } from "./channels/anthropic";
 import { discordChannel } from "./channels/discord";
 import { slackChannel } from "./channels/slack";
 import { conditionChannel } from "./channels/condition";
+import { scheduleTriggerChannel } from "./channels/schedule-trigger";
 import { runConditionNode } from "@/features/executions/components/condition/executor";
 import type { ConditionData } from "@/features/executions/components/condition/constants";
 const google = createGoogleGenerativeAI();
@@ -42,6 +43,7 @@ export const executeWorkflow = inngest.createFunction(
       discordChannel(),
       slackChannel(),
       conditionChannel(),
+      scheduleTriggerChannel(),
     ],
   },
   async ({ event, step, publish }) => {

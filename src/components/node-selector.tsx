@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useReactFlow } from "@xyflow/react";
-import { GitBranchIcon, GlobeIcon, MousePointer2Icon, WebhookIcon } from "lucide-react";
+import { ClockIcon, GitBranchIcon, GlobeIcon, MousePointer2Icon, WebhookIcon } from "lucide-react";
 import { createId } from "@paralleldrive/cuid2";
 import {
   Sheet,
@@ -44,6 +44,12 @@ const triggerNodes: NodeTypeOption[] = [
     label: "Stripe event",
     description: "Start the workflow when a stripe event is captured.",
     icon: "/logos/stripe.svg",
+  },
+  {
+    type: NodeType.SCHEDULE_TRIGGER,
+    label: "Schedule",
+    description: "Run the workflow automatically on a schedule (e.g. every morning).",
+    icon: ClockIcon,
   },
 ];
 
