@@ -103,6 +103,7 @@ model Workflow {
   name      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  lastScheduledRunAt DateTime?
   nodes Node[]
   connections Connection[]
   executions Execution[]
@@ -116,6 +117,7 @@ enum NodeType{
   HTTP_REQUEST
   GOOGLE_FORM_TRIGGER
   STRIPE_TRIGGER
+  SCHEDULE_TRIGGER
   ANTHROPIC
   GEMINI
   OPENAI

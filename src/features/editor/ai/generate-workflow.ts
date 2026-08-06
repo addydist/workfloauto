@@ -19,6 +19,7 @@ import type { GeneratedEdge, GeneratedNode, GenerateResult } from "./types";
 // external setup, and the INITIAL placeholder).
 const GEN_NODE_TYPES = [
   "MANUAL_TRIGGER",
+  "SCHEDULE_TRIGGER",
   "HTTP_REQUEST",
   "GEMINI",
   "OPENAI",
@@ -29,7 +30,7 @@ const GEN_NODE_TYPES = [
 ] as const;
 type GenNodeType = (typeof GEN_NODE_TYPES)[number];
 
-const TRIGGER_TYPES: GenNodeType[] = ["MANUAL_TRIGGER"];
+const TRIGGER_TYPES: GenNodeType[] = ["MANUAL_TRIGGER", "SCHEDULE_TRIGGER"];
 const operatorValues = CONDITION_OPERATORS.map((o) => o.value) as [
   string,
   ...string[],
@@ -60,6 +61,11 @@ const genSchema = z.object({
             leftValue: z.string().optional(),
             operator: z.enum(operatorValues).optional(),
             rightValue: z.string().optional(),
+            frequency: z.enum(["minutes", "daily", "weekly"]).optional(),
+            everyMinutes: z.number().optional(),
+            hour: z.number().optional(),
+            minute: z.number().optional(),
+            weekday: z.number().optional(),
           })
           .describe("Config for this node. Fill the fields its type requires."),
       }),
@@ -85,7 +91,8 @@ type GenWorkflow = z.infer<typeof genSchema>;
 const SYSTEM_PROMPT = `You are an expert automation architect for Nodeflo, a visual workflow tool. Turn the user's request into a runnable workflow graph of nodes and connections.
 
 NODE TYPES you may use and their config fields:
-- MANUAL_TRIGGER — the workflow's starting point. No config. Every workflow MUST start with a trigger.
+- MANUAL_TRIGGER — the workflow's starting point, run on demand. No config.
+- SCHEDULE_TRIGGER — starts the workflow automatically on a schedule. Use this INSTEAD of MANUAL_TRIGGER when the request implies timing ("every morning", "daily at 9am", "every 5 minutes", "weekly"). Fields: frequency ("minutes" | "daily" | "weekly"); for "minutes" set everyMinutes (5/10/15/30); for "daily"/"weekly" set hour (0-23) and minute (0-59); for "weekly" also set weekday (0=Sunday .. 6=Saturday).
 - HTTP_REQUEST — call an API. Fields: variableName, endpoint (full URL), method (GET/POST/PUT/DELETE), body (JSON string, only for POST/PUT). Output is referenced as {{variableName.httpResponse.data}}.
 - GEMINI / OPENAI / ANTHROPIC — call an AI model. Fields: variableName, userPrompt (required), systemPrompt (optional). Output is referenced as {{variableName.text}}. NEVER set credentials.
 - DISCORD — send a Discord message. Fields: variableName, content (the message; may use {{variables}}), username (optional). NEVER set the webhook URL.
@@ -93,7 +100,7 @@ NODE TYPES you may use and their config fields:
 - CONDITION — branch the flow. Fields: leftValue, operator, rightValue. It has TWO outputs; wire downstream nodes using connection branch "true" or "false".
 
 RULES:
-- Start with exactly one trigger (use MANUAL_TRIGGER unless the request clearly implies another).
+- Start with exactly one trigger. Use SCHEDULE_TRIGGER when the request implies timing (e.g. "every morning at 9am" → daily, hour 9, minute 0); otherwise MANUAL_TRIGGER.
 - Reference earlier outputs with {{variableName.field}} handlebars (e.g. {{ask_ai.text}}, {{fetch.httpResponse.data}}).
 - variableName must be a valid identifier: letters, digits, underscores; start with a letter/underscore.
 - Every non-trigger node must be reachable from the trigger. Connections form a DAG (no cycles).
@@ -249,6 +256,22 @@ function sanitizeData(
         content: data.content ?? "",
         webhookurl: "",
       };
+    case "SCHEDULE_TRIGGER": {
+      const frequency = data.frequency ?? "daily";
+      if (frequency === "minutes") {
+        return { frequency, everyMinutes: data.everyMinutes ?? 15 };
+      }
+      if (frequency === "weekly") {
+        return {
+          frequency,
+          weekday: data.weekday ?? 1,
+          hour: data.hour ?? 9,
+          minute: data.minute ?? 0,
+        };
+      }
+      // timezone omitted → the node dialog auto-detects it on first open.
+      return { frequency: "daily", hour: data.hour ?? 9, minute: data.minute ?? 0 };
+    }
     case "CONDITION":
       return {
         leftValue: data.leftValue ?? "",

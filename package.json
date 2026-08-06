@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "prisma generate && prisma migrate deploy && next build --turbopack",
+    "build": "next build --turbopack",
     "start": "next start",
     "lint": "biome check",
     "ngrok:dev": "ngrok http --url=unannihilated-xiomara-nonflatulently.ngrok-free.dev 3000",
@@ -65,7 +65,7 @@
     "embla-carousel-react": "^8.6.0",
     "handlebars": "^4.7.8",
     "html-entities": "^2.6.0",
-    "inngest": "^3.54.2",
+    "inngest": "^3.44.1",
     "input-otp": "^1.4.2",
     "jotai": "^2.15.0",
     "ky": "^1.14.3",
