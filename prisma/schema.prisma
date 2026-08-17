@@ -26,6 +26,7 @@ model User {
   accounts      Account[]
   workflows     Workflow[]
   credentials   Credential[]
+  workflowMemberships WorkflowMember[]
   @@unique([email])
   @@map("user")
 }
@@ -104,11 +105,58 @@ model Workflow {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   lastScheduledRunAt DateTime?
+  version   Int      @default(0)
   nodes Node[]
   connections Connection[]
   executions Execution[]
+  members WorkflowMember[]
+  invites WorkflowInvite[]
+  inviteLinks WorkflowInviteLink[]
   userId String
   user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum WorkflowRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+model WorkflowMember {
+  id         String       @id @default(cuid())
+  workflowId String
+  workflow   Workflow     @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       WorkflowRole @default(VIEWER)
+  createdAt  DateTime     @default(now())
+
+  @@unique([workflowId, userId])
+  @@index([userId])
+}
+
+model WorkflowInvite {
+  id          String       @id @default(cuid())
+  workflowId  String
+  workflow    Workflow     @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  email       String
+  role        WorkflowRole @default(VIEWER)
+  invitedById String
+  createdAt   DateTime     @default(now())
+
+  @@unique([workflowId, email])
+  @@index([email])
+}
+
+model WorkflowInviteLink {
+  id         String       @id @default(cuid())
+  workflowId String
+  workflow   Workflow     @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  token      String       @unique @default(cuid())
+  role       WorkflowRole @default(VIEWER)
+  createdAt  DateTime     @default(now())
+
+  @@unique([workflowId, role])
 }
 
 enum NodeType{

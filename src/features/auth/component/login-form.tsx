@@ -38,7 +38,11 @@ const loginSchema = z.object({
 });
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export function LoginForm() {
+export function LoginForm({
+  callbackURL = "/workflows",
+}: {
+  callbackURL?: string;
+}) {
   const router = useRouter();
   const form = useForm({
     resolver: zodResolver(loginSchema),
@@ -50,7 +54,7 @@ export function LoginForm() {
   const signInGithub = async () => {
     await authClient.signIn.social({
         provider: "github",
-        callbackURL: "/workflows"
+        callbackURL
     },{
       onError:()=>{
         toast.error("Something went wrong")
@@ -60,7 +64,7 @@ export function LoginForm() {
   const signInGoogle = async () => {
     await authClient.signIn.social({
         provider: "google",
-        callbackURL: "/workflows"
+        callbackURL
     },{
       onError:()=>{
         toast.error("Something went wrong")
@@ -72,11 +76,11 @@ export function LoginForm() {
       {
         email: data.email,
         password: data.password,
-        callbackURL: "/workflows",
+        callbackURL,
       },
       {
         onSuccess: () => {
-          router.push("/workflows");
+          router.push(callbackURL);
         },
         onError: (ctx) => {
           toast.error(ctx.error.message);
@@ -170,7 +174,10 @@ export function LoginForm() {
         {/* Footer */}
         <p className="text-center text-sm text-muted-foreground">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="text-primary hover:underline">
+          <Link
+            href={`/signup?callbackURL=${encodeURIComponent(callbackURL)}`}
+            className="text-primary hover:underline"
+          >
             Sign Up
           </Link>
         </p>
