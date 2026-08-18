@@ -22,6 +22,8 @@ import "@xyflow/react/dist/style.css";
 import { nodeComponents } from "@/config/node-components";
 import { AddNodeButton } from "./add-node-button";
 import { AiWorkflowGenerator } from "./ai-generate-dialog";
+import { Badge } from "@/components/ui/badge";
+import { EyeIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSetAtom } from "jotai";
 
@@ -41,6 +43,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
   const { data: workflow } = useSuspenseWorkflow(workflowId);
   const { resolvedTheme } = useTheme();
   const setEditor=useSetAtom(editorAtom);
+  const canEdit = workflow.role === "OWNER" || workflow.role === "EDITOR";
   const [nodes, setNodes] = useState<Node[]>(workflow?.nodes);
   const [edges, setEdges] = useState<Edge[]>(workflow?.edges);
   const onNodesChange = useCallback(
@@ -78,19 +81,32 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         panOnScroll
         panOnDrag={false}
         selectionOnDrag
+        nodesDraggable={canEdit}
+        nodesConnectable={canEdit}
+        deleteKeyCode={canEdit ? undefined : null}
       >
         <Background />
         <Controls/>
         <MiniMap/>
-        {AI_BUILDER_ENABLED && (
+        {canEdit && AI_BUILDER_ENABLED && (
           <Panel position="top-left">
             <AiWorkflowGenerator />
           </Panel>
         )}
-        <Panel position="top-right">
-          <AddNodeButton/>
-        </Panel>
-        {hasManualTrigger &&(
+        {!canEdit && (
+          <Panel position="top-left">
+            <Badge variant="secondary" className="gap-1">
+              <EyeIcon className="size-3" />
+              View only
+            </Badge>
+          </Panel>
+        )}
+        {canEdit && (
+          <Panel position="top-right">
+            <AddNodeButton/>
+          </Panel>
+        )}
+        {hasManualTrigger && canEdit &&(
           <Panel position="bottom-center">
             <ExecuteWorkflowButton workflowId={workflowId} />
           </Panel>

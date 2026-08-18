@@ -1,6 +1,7 @@
 import { useTRPC } from "@/trpc/client";
 import {
   useMutation,
+  useQuery,
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
@@ -87,7 +88,7 @@ export const useUpdateWorkflow = () => {
   return useMutation(
     trpc.workflows.update.mutationOptions({
       onSuccess: (data) => {
-        toast.success(`Workflow ${data.name} saved`);
+        toast.success(`Workflow saved`);
         queryClient.invalidateQueries(
           trpc.workflows.getMany.queryOptions({})
         );
@@ -96,11 +97,102 @@ export const useUpdateWorkflow = () => {
         );
       },
       onError: (error) => {
-        toast.error(`Error saving workflow: ${error.message}`);
+        toast.error(error.message);
       }
     })
   );
 };
+export const useWorkflowMembers = (workflowId: string, enabled = true) => {
+  const trpc = useTRPC();
+  return useQuery(
+    trpc.workflows.members.queryOptions({ workflowId }, { enabled })
+  );
+};
+
+export const useInviteMember = (workflowId: string) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  return useMutation(
+    trpc.workflows.invite.mutationOptions({
+      onSuccess: (data) => {
+        toast.success(
+          data.status === "added"
+            ? "Member added"
+            : "Invite sent — they'll get access when they sign up"
+        );
+        queryClient.invalidateQueries(
+          trpc.workflows.members.queryOptions({ workflowId })
+        );
+      },
+      onError: (error) => toast.error(error.message),
+    })
+  );
+};
+
+export const useRemoveMember = (workflowId: string) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  return useMutation(
+    trpc.workflows.removeMember.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.workflows.members.queryOptions({ workflowId })
+        );
+      },
+      onError: (error) => toast.error(error.message),
+    })
+  );
+};
+
+export const useRemoveInvite = (workflowId: string) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  return useMutation(
+    trpc.workflows.removeInvite.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.workflows.members.queryOptions({ workflowId })
+        );
+      },
+      onError: (error) => toast.error(error.message),
+    })
+  );
+};
+
+export const useUpdateMemberRole = (workflowId: string) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  return useMutation(
+    trpc.workflows.updateMemberRole.mutationOptions({
+      onSuccess: () => {
+        queryClient.invalidateQueries(
+          trpc.workflows.members.queryOptions({ workflowId })
+        );
+      },
+      onError: (error) => toast.error(error.message),
+    })
+  );
+};
+
+export const useCreateInviteLink = () => {
+  const trpc = useTRPC();
+  return useMutation(
+    trpc.workflows.createInviteLink.mutationOptions({
+      onError: (error) => toast.error(error.message),
+    })
+  );
+};
+
+export const useRevokeInviteLinks = () => {
+  const trpc = useTRPC();
+  return useMutation(
+    trpc.workflows.revokeInviteLinks.mutationOptions({
+      onSuccess: () => toast.success("Invite links reset"),
+      onError: (error) => toast.error(error.message),
+    })
+  );
+};
+
 export const useExecuteWorkflow = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -108,7 +200,7 @@ export const useExecuteWorkflow = () => {
   return useMutation(
     trpc.workflows.execute.mutationOptions({
       onSuccess: (data) => {
-        toast.success(`Workflow ${data.name} executed`);
+        toast.success(`Workflow execution started`);
         queryClient.invalidateQueries(
           trpc.workflows.getMany.queryOptions({})
         );
@@ -117,7 +209,7 @@ export const useExecuteWorkflow = () => {
         );
       },
       onError: (error) => {
-        toast.error(`Error executing workflow: ${error.message}`);
+        toast.error(error.message);
       }
     })
   );

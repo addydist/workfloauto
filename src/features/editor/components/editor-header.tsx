@@ -1,7 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { SaveIcon } from "lucide-react";
+import { SaveIcon, Share2Icon, UsersIcon } from "lucide-react";
+import { ShareWorkflowDialog } from "@/features/workflows/components/share-dialog";
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -23,24 +25,24 @@ import { useAtomValue } from "jotai";
 import { editorAtom } from "../store/atom";
 export const EditorSaveButton = ({ workflowId }: { workflowId: string }) => {
   const editor = useAtomValue(editorAtom);
-  const saveWorkflow =useUpdateWorkflow();
-  const handleSave=()=>{
-    if(!editor) return;
-    const nodes=editor.getNodes();
-    const edges=editor.getEdges();
-    saveWorkflow.mutate({id:workflowId,nodes,edges});
-  }
+  const { data: workflow } = useSuspenseWorkflow(workflowId);
+  const saveWorkflow = useUpdateWorkflow();
+  const handleSave = () => {
+    if (!editor) return;
+    const nodes = editor.getNodes();
+    const edges = editor.getEdges();
+    saveWorkflow.mutate({
+      id: workflowId,
+      version: workflow.version,
+      nodes,
+      edges,
+    });
+  };
   return (
-    <div className="ml-auto">
-      <Button
-        size="sm"
-        onClick={handleSave}
-        disabled={saveWorkflow.isPending}
-      >
-        <SaveIcon />
-        Save
-      </Button>
-    </div>
+    <Button size="sm" onClick={handleSave} disabled={saveWorkflow.isPending}>
+      <SaveIcon />
+      Save
+    </Button>
   );
 };
 export const EditorBreadcrumbs = ({ workflowId }: { workflowId: string }) => {
@@ -61,12 +63,41 @@ export const EditorBreadcrumbs = ({ workflowId }: { workflowId: string }) => {
   );
 };
 export const EditorHeader = ({ workflowId }: { workflowId: string }) => {
+  const { data: workflow } = useSuspenseWorkflow(workflowId);
+  const [shareOpen, setShareOpen] = useState(false);
+  const isOwner = workflow.role === "OWNER";
+  const canEdit = isOwner || workflow.role === "EDITOR";
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4 bg-background">
       <SidebarTrigger />
       <div className="flex flex-row items-center justify-between gap-x-4 w-full">
         <EditorBreadcrumbs workflowId={workflowId} />
-        <EditorSaveButton workflowId={workflowId} />
+        <div className="flex items-center gap-2">
+          {!isOwner && (
+            <Badge variant="secondary" className="gap-1">
+              <UsersIcon className="size-3" />
+              {workflow.role === "EDITOR" ? "Editor" : "Viewer"}
+            </Badge>
+          )}
+          {isOwner && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShareOpen(true)}
+              >
+                <Share2Icon className="size-4" />
+                Share
+              </Button>
+              <ShareWorkflowDialog
+                workflowId={workflowId}
+                open={shareOpen}
+                onOpenChange={setShareOpen}
+              />
+            </>
+          )}
+          {canEdit && <EditorSaveButton workflowId={workflowId} />}
+        </div>
       </div>
     </header>
   );
@@ -74,6 +105,7 @@ export const EditorHeader = ({ workflowId }: { workflowId: string }) => {
 
 export const EditorNameInput = ({ workflowId }: { workflowId: string }) => {
   const { data: workflow } = useSuspenseWorkflow(workflowId);
+  const canEdit = workflow.role === "OWNER" || workflow.role === "EDITOR";
   const updateName = useUpdateWorkflowName();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(workflow.name);
@@ -126,8 +158,10 @@ export const EditorNameInput = ({ workflowId }: { workflowId: string }) => {
   }
   return (
     <BreadcrumbItem
-      onClick={() => setIsEditing(true)}
-      className="cursor-pointer hover:text-foreground transition-colors"
+      onClick={() => canEdit && setIsEditing(true)}
+      className={
+        canEdit ? "cursor-pointer hover:text-foreground transition-colors" : ""
+      }
     >
       {workflow.name}
     </BreadcrumbItem>

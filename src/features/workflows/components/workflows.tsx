@@ -16,9 +16,18 @@ import { useRouter } from "next/navigation";
 import { useWorkflowParams } from "../hooks/use-workflow-params";
 import { useEntitySearch } from "@/hooks/use-entity-search";
 import Error from "next/error";
-import { Workflow } from "@/generated/prisma";
-import { ClockIcon, WorkflowIcon } from "lucide-react";
+import { ClockIcon, UsersIcon, WorkflowIcon } from "lucide-react";
 import {formatDistanceToNow} from "date-fns"
+import { Badge } from "@/components/ui/badge";
+
+type WorkflowListItem = {
+  id: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  role: "OWNER" | "EDITOR" | "VIEWER";
+};
 
 export const WorkFlowSearch = () => {
   const [params, setParams] = useWorkflowParams();
@@ -140,8 +149,9 @@ export const WorkflowsContainer = ({
   );
 };
 
-export const WorkflowItem = ({ data }: { data: Workflow }) => {
+export const WorkflowItem = ({ data }: { data: WorkflowListItem }) => {
   const removeWorkflow=useRemoveWorkflow();
+  const isOwner = data.role === "OWNER";
   const handleRemove=()=>{
     removeWorkflow.mutate({id:data.id});
   }
@@ -160,7 +170,15 @@ export const WorkflowItem = ({ data }: { data: Workflow }) => {
           <WorkflowIcon className="size-5 text-primary" />
         </div>
       }
-      onRemove={handleRemove}
+      actions={
+        !isOwner ? (
+          <Badge variant="secondary" className="gap-1">
+            <UsersIcon className="size-3" />
+            Shared · {data.role === "EDITOR" ? "Editor" : "Viewer"}
+          </Badge>
+        ) : undefined
+      }
+      onRemove={isOwner ? handleRemove : undefined}
       isRemoving={removeWorkflow.isPending}
     />
   );

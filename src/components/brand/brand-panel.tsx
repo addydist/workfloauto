@@ -42,7 +42,7 @@ export const BrandPanel = () => {
       </div>
 
       {/* Integrations */}
-      <div className="relative flex items-center gap-4">
+      <div className="relative flex items-center gap-5">
         <span className="text-xs uppercase tracking-wider text-muted-foreground/70">
           Connects    
         </span>
