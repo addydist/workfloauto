@@ -101,27 +101,27 @@ export const ConditionNode = memo((props: NodeProps<ConditionNodeType>) => {
 
             {/* True branch output */}
             <div className="relative flex items-center justify-end py-1.5 pl-3">
-              <span className="mr-3 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+              <span className="mr-3 text-xs font-bold uppercase text-chart-4">
                 True
               </span>
               <BaseHandle
                 id="true"
                 type="source"
                 position={Position.Right}
-                className="!border-emerald-500 !bg-emerald-500"
+                className="border-chart-4! bg-chart-4!"
               />
             </div>
 
             {/* False branch output */}
             <div className="relative flex items-center justify-end border-t py-1.5 pl-3">
-              <span className="mr-3 text-xs font-semibold text-red-600 dark:text-red-400">
+              <span className="mr-3 text-xs font-bold uppercase text-chart-1">
                 False
               </span>
               <BaseHandle
                 id="false"
                 type="source"
                 position={Position.Right}
-                className="!border-red-500 !bg-red-500"
+                className="border-chart-1! bg-chart-1!"
               />
             </div>
 

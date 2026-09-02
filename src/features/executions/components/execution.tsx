@@ -28,11 +28,11 @@ import { Button } from "@/components/ui/button";
 const getStatusIcon = (status: ExecutionStatus) => {
   switch (status) {
     case ExecutionStatus.SUCCESS:
-      return <CheckCircle2Icon className="size-5 text-green-600 " />;
+      return <CheckCircle2Icon className="size-5 text-chart-4" />;
     case ExecutionStatus.RUNNING:
-      return <Loader2Icon className="size-5 text-blue-600 animate-spin " />;
+      return <Loader2Icon className="size-5 animate-spin text-chart-3" />;
     case ExecutionStatus.FAILED:
-      return <XCircleIcon className="size-5 text-red-600 " />;
+      return <XCircleIcon className="size-5 text-chart-1" />;
     default:
       return <Clock1Icon className="size-5 text-muted-foreground" />;
   }
@@ -124,10 +124,10 @@ export const ExecutionView = ({ executionId }: { executionId: string }) => {
           </div>
         </div>
         {execution.error ? (
-          <div className="mt-6 p-4 bg-red-50 rounded-md space-y-3">
+          <div className="mt-6 space-y-3 border-2 border-chart-1 bg-chart-1/10 p-4">
             <div>
-              <p className="text-sm font-medium text-red-900">Error</p>
-              <p className="text-sm text-red-800 font-mono">
+              <p className="text-sm font-bold uppercase tracking-wide">Error</p>
+              <p className="font-mono text-sm">
                 {execution.error}
               </p>
             </div>
@@ -143,13 +143,13 @@ export const ExecutionView = ({ executionId }: { executionId: string }) => {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="text-red-900 hover:bg-red-100"
+                    className="text-chart-1 hover:bg-chart-1/10"
                   >
                     {showStackTrace ? "Hide Stack trace" : "Show stack trace"}
                   </Button>
                 </CollapsibleTrigger>
                 <CollapsibleContent>
-                  <pre className="text-xs font-mono text-red-800 overflow-auto mt-2 p-2 bg-red-100 rounded">
+                  <pre className="mt-2 overflow-auto border-2 bg-muted p-2 font-mono text-xs">
                     {execution.errorStack}
                   </pre>
                 </CollapsibleContent>

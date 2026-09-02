@@ -68,7 +68,7 @@ export default async function LandingPage() {
         <header className="flex items-center justify-between py-6">
           <Link href="/" className="flex items-center gap-2.5">
             <Image src="/logos/logo.svg" alt="Nodeflo" width={28} height={28} />
-            <span className="font-display text-lg font-semibold">Nodeflo</span>
+            <span className="font-display text-lg font-bold uppercase">Nodeflo</span>
           </Link>
           <LandingActions loggedIn={loggedIn} />
         </header>
@@ -76,13 +76,13 @@ export default async function LandingPage() {
         {/* Hero */}
         <section className="grid flex-1 items-center gap-12 py-12 lg:grid-cols-2 lg:py-20">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full border bg-muted/50 px-3 py-1 text-xs text-muted-foreground">
-              <span className="size-1.5 rounded-full bg-primary" />
+            <span className="inline-flex items-center gap-2 border-2 bg-secondary px-3 py-1 text-xs font-medium uppercase tracking-wide text-secondary-foreground">
+              <span className="size-2 bg-primary" />
               Visual workflow automation
             </span>
-            <h1 className="font-display mt-5 text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl">
+            <h1 className="font-display mt-5 text-5xl font-bold uppercase leading-[1.05] tracking-tight sm:text-6xl">
               Automate anything.{" "}
-              <span className="bg-gradient-to-r from-[#FF7A00] to-[#FFBC7D] bg-clip-text text-transparent">
+              <span className="bg-primary px-2 text-primary-foreground">
                 Visually.
               </span>
             </h1>
@@ -108,13 +108,13 @@ export default async function LandingPage() {
           </div>
 
           {/* Product visual */}
-          <div className="brand-float rounded-2xl border bg-card/60 p-6 shadow-xl backdrop-blur-sm sm:p-8">
+          <div className="brand-float border-2 bg-card p-6 shadow-lg sm:p-8">
             <FlowGraphic />
           </div>
         </section>
 
         {/* Integrations */}
-        <section className="border-t py-10">
+        <section className="border-t-2 py-10">
           <p className="text-center text-xs uppercase tracking-wider text-muted-foreground/70">
             Connect the tools you already use
           </p>
@@ -138,12 +138,12 @@ export default async function LandingPage() {
             {features.map(({ icon: Icon, title, body }) => (
               <div
                 key={title}
-                className="rounded-2xl border bg-card p-6 transition hover:border-primary/40"
+                className="border-2 bg-card p-6 shadow-xs transition-all hover:-translate-y-1 hover:shadow-lg"
               >
-                <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                <div className="flex size-10 items-center justify-center border-2 bg-primary text-primary-foreground">
                   <Icon className="size-5" />
                 </div>
-                <h3 className="font-display mt-4 text-lg font-semibold">
+                <h3 className="font-display mt-4 text-lg font-bold">
                   {title}
                 </h3>
                 <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
@@ -156,10 +156,10 @@ export default async function LandingPage() {
 
         {/* CTA band */}
         <section className="pb-16">
-          <div className="relative overflow-hidden rounded-3xl border bg-card px-8 py-14 text-center">
+          <div className="relative overflow-hidden border-2 bg-card px-8 py-14 text-center shadow-lg">
             <div className="brand-mesh pointer-events-none absolute inset-0" />
             <div className="relative">
-              <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+              <h2 className="font-display text-3xl font-bold uppercase tracking-tight sm:text-4xl">
                 Ready to automate?
               </h2>
               <p className="mx-auto mt-3 max-w-md text-sm text-muted-foreground">
@@ -176,7 +176,7 @@ export default async function LandingPage() {
         </section>
 
         {/* Footer */}
-        <footer className="flex flex-col items-center justify-between gap-4 border-t py-8 text-sm text-muted-foreground sm:flex-row">
+        <footer className="flex flex-col items-center justify-between gap-4 border-t-2 py-8 text-sm text-muted-foreground sm:flex-row">
           <div className="flex items-center gap-2">
             <Image src="/logos/logo.svg" alt="Nodeflo" width={20} height={20} />
             <span className="font-display font-medium text-foreground/80">

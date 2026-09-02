@@ -21,13 +21,13 @@ export const SpinnerLoadingIndicator = ({
 }) => {
   return (
     <div className="relative">
-      <StatusBorder className="border-blue-700/40">{children}</StatusBorder>
+      <StatusBorder className="border-chart-3">{children}</StatusBorder>
 
       <div className="bg-background/50 absolute inset-0 z-50 rounded-[9px] backdrop-blur-xs" />
       <div className="absolute inset-0 z-50">
-        <span className="absolute top-[calc(50%-1.25rem)] left-[calc(50%-1.25rem)] inline-block h-10 w-10 animate-ping rounded-full bg-blue-700/20" />
+        <span className="absolute top-[calc(50%-1.25rem)] left-[calc(50%-1.25rem)] inline-block h-10 w-10 animate-ping rounded-full bg-chart-3/20" />
 
-        <LoaderCircle className="absolute top-[calc(50%-0.75rem)] left-[calc(50%-0.75rem)] size-6 animate-spin text-blue-700" />
+        <LoaderCircle className="absolute top-[calc(50%-0.75rem)] left-[calc(50%-0.75rem)] size-6 animate-spin text-chart-3" />
       </div>
     </div>
   );
@@ -109,19 +109,19 @@ export const NodeStatusIndicator = ({
         )
       ) : status === "success" ? (
         <>
-          <StatusBorder className={cn("border-emerald-500/50", className)}>
+          <StatusBorder className={cn("border-chart-4", className)}>
             {children}
           </StatusBorder>
-          <div className="absolute -right-2 -bottom-2 z-50 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background bg-emerald-500 text-white shadow-sm">
+          <div className="absolute -right-2 -bottom-2 z-50 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background bg-chart-4 text-background shadow-sm">
             <Check className="size-3 stroke-[3]" />
           </div>
         </>
       ) : status === "error" ? (
         <>
-          <StatusBorder className={cn("border-red-500/50", className)}>
+          <StatusBorder className={cn("border-chart-1", className)}>
             {children}
           </StatusBorder>
-          <div className="absolute -right-2 -bottom-2 z-50 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background bg-red-500 text-white shadow-sm">
+          <div className="absolute -right-2 -bottom-2 z-50 flex h-5 w-5 items-center justify-center rounded-full border-2 border-background bg-chart-1 text-background shadow-sm">
             <X className="size-3 stroke-[3]" />
           </div>
         </>

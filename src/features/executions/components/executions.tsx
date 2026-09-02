@@ -19,11 +19,11 @@ import { CheckCircle2Icon, Clock1Icon, Loader2Icon, XCircleIcon } from "lucide-r
 const getStatusIcon=(status:ExecutionStatus)=>{
   switch(status){
     case ExecutionStatus.SUCCESS :
-      return <CheckCircle2Icon className="size-5 text-green-600 "/>
+      return <CheckCircle2Icon className="size-5 text-chart-4"/>
     case ExecutionStatus.RUNNING:
-        return <Loader2Icon className="size-5 text-blue-600 animate-spin "/>
+        return <Loader2Icon className="size-5 animate-spin text-chart-3"/>
     case ExecutionStatus.FAILED:
-        return <XCircleIcon className="size-5 text-red-600 "/>
+        return <XCircleIcon className="size-5 text-chart-1"/>
     default:
         return <Clock1Icon className="size-5 text-muted-foreground"/>
   }

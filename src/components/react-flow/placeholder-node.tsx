@@ -22,7 +22,7 @@ export function PlaceholderNode({ children,onClick }: PlaceholderNodeProps) {
 
   return (
     <BaseNode
-      className="w-auto h-auto border-dashed border-gray-400 p-4 text-center text-gray-400 shadow-nonec cursor-pointer hover:border-gray-600 hover:text-gray-600"
+      className="h-auto w-auto cursor-pointer border-2 border-dashed border-muted-foreground p-4 text-center text-muted-foreground shadow-none hover:border-foreground hover:text-foreground"
       onClick={onClick}
     >
       {children}
