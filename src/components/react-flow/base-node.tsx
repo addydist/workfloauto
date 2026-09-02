@@ -10,14 +10,14 @@ export function BaseNode({
   return (
     <div
       className={cn(
-        "bg-card text-card-foreground relative rounded-md border",
-        "hover:ring-1",
+        "bg-card text-card-foreground relative rounded-md border-2 shadow-xs",
+        "transition-shadow hover:shadow-md",
         // React Flow displays node elements inside of a `NodeWrapper` component,
         // which compiles down to a div with the class `react-flow__node`.
         // When a node is selected, the class `selected` is added to the
         // `react-flow__node` element. This allows us to style the node when it
         // is selected, using Tailwind's `&` selector.
-        "[.react-flow\\_\\_node.selected_&]:border-muted-foreground",
+        "[.react-flow\\_\\_node.selected_&]:border-primary",
         "[.react-flow\\_\\_node.selected_&]:shadow-lg",
         className,
       )}
@@ -83,7 +83,7 @@ export function BaseNodeFooter({ className, ...props }: ComponentProps<"div">) {
     <div
       data-slot="base-node-footer"
       className={cn(
-        "flex flex-col items-center gap-y-2 border-t px-3 pt-2 pb-3",
+        "flex flex-col items-center gap-y-2 border-t-2 px-3 pt-2 pb-3",
         className,
       )}
       {...props}

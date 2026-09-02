@@ -14,6 +14,7 @@ import {
   EdgeChange,
   Connection,
   Background,
+  BackgroundVariant,
   Controls,
   MiniMap,
   Panel,
@@ -85,7 +86,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         nodesConnectable={canEdit}
         deleteKeyCode={canEdit ? undefined : null}
       >
-        <Background />
+        <Background variant={BackgroundVariant.Cross} gap={32} size={4} />
         <Controls/>
         <MiniMap/>
         {canEdit && AI_BUILDER_ENABLED && (

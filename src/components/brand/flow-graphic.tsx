@@ -4,8 +4,9 @@ import { cn } from "@/lib/utils";
  * Decorative, non-interactive miniature of a Nodeflo workflow:
  *   Trigger → AI → Condition ─┬─ True  → HTTP
  *                             └─ False → Slack
- * Pure SVG on a fixed viewBox so it scales crisply. Theme-aware: node fills,
- * strokes and text follow the app tokens, while branch accents stay branded.
+ * Pure SVG on a fixed viewBox so it scales crisply. Everything — fills,
+ * strokes, text and the per-node accents — is driven by theme tokens, so it
+ * repaints with the palette instead of carrying its own hex codes.
  */
 export const FlowGraphic = ({ className }: { className?: string }) => {
   return (
@@ -19,25 +20,25 @@ export const FlowGraphic = ({ className }: { className?: string }) => {
     >
       {/* Neutral connectors */}
       <g
-        className="stroke-foreground/20"
-        strokeWidth="2"
+        className="stroke-foreground"
+        strokeWidth="3"
         fill="none"
-        strokeLinecap="round"
+        strokeLinecap="square"
       >
         <path d="M150 88 C 178 88, 182 88, 205 88" />
         <path d="M315 88 C 342 88, 346 88, 368 88" />
       </g>
       {/* Branch connectors keep their accent colors */}
-      <g strokeWidth="2" fill="none" strokeLinecap="round">
-        <path d="M478 76 C 512 76, 512 128, 500 150" className="brand-dash" stroke="rgba(52,211,153,0.6)" />
-        <path d="M478 104 C 512 104, 512 214, 470 238" className="brand-dash" stroke="rgba(248,113,113,0.55)" />
+      <g strokeWidth="3" fill="none" strokeLinecap="square">
+        <path d="M478 76 C 512 76, 512 128, 500 150" className="brand-dash" stroke="var(--chart-4)" />
+        <path d="M478 104 C 512 104, 512 214, 470 238" className="brand-dash" stroke="var(--chart-1)" />
       </g>
 
-      <Node x={40} y={64} label="Trigger" accent="#FF7A00" />
-      <Node x={205} y={64} label="Gemini" accent="#FF9736" />
-      <Node x={368} y={64} label="Condition" accent="#a78bfa" branch />
-      <Node x={452} y={126} label="HTTP" accent="#34d399" small />
-      <Node x={400} y={214} label="Slack" accent="#f87171" small />
+      <Node x={40} y={64} label="Trigger" accent="var(--chart-2)" />
+      <Node x={205} y={64} label="Gemini" accent="var(--chart-3)" />
+      <Node x={368} y={64} label="Condition" accent="var(--chart-5)" branch />
+      <Node x={452} y={126} label="HTTP" accent="var(--chart-4)" small />
+      <Node x={400} y={214} label="Slack" accent="var(--chart-1)" small />
     </svg>
   );
 };
@@ -64,24 +65,24 @@ const Node = ({
       <rect
         width={w}
         height={h}
-        rx={12}
         className="fill-card stroke-border"
+        strokeWidth="2"
       />
-      <circle cx={18} cy={h / 2} r={5} fill={accent} />
+      <rect x={11} y={h / 2 - 7} width={14} height={14} fill={accent} />
       <text
         x={34}
         y={h / 2 + 4}
         className="fill-foreground"
         fontSize="12"
         fontFamily="var(--font-display), sans-serif"
-        fontWeight="600"
+        fontWeight="700"
       >
         {label}
       </text>
       {branch && (
         <>
-          <circle cx={w} cy={h / 2 - 12} r={4} fill="#34d399" />
-          <circle cx={w} cy={h / 2 + 12} r={4} fill="#f87171" />
+          <rect x={w - 5} y={h / 2 - 17} width={10} height={10} fill="var(--chart-4)" />
+          <rect x={w - 5} y={h / 2 + 7} width={10} height={10} fill="var(--chart-1)" />
         </>
       )}
     </g>

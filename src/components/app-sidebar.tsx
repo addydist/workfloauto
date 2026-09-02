@@ -96,7 +96,7 @@ export function AppSidebar() {
                         tooltip={item.title}
                         asChild
                         isActive={isActive}
-                        className="relative data-[active=true]:bg-primary/10 data-[active=true]:text-primary data-[active=true]:font-medium data-[active=true]:before:absolute data-[active=true]:before:left-0 data-[active=true]:before:inset-y-1.5 data-[active=true]:before:w-[3px] data-[active=true]:before:rounded-r-full data-[active=true]:before:bg-primary data-[active=true]:before:content-['']"
+                        className="h-10 border-2 border-transparent px-4 data-[active=true]:border-border data-[active=true]:bg-primary data-[active=true]:font-bold data-[active=true]:text-primary-foreground data-[active=true]:shadow-xs"
                       >
                         <Link
                           href={item.url}
@@ -157,7 +157,7 @@ export function AppSidebar() {
                   },
                 })
               }
-              className="gap-x-4 h-10 px-4 text-muted-foreground hover:bg-red-500/10 hover:text-red-600"
+              className="gap-x-4 h-10 px-4 hover:bg-chart-1 hover:text-background"
             >
               <LogOutIcon size={18} />
               <span>Sign Out</span>
